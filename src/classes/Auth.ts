@@ -23,17 +23,17 @@ class Auth {
     }
   }
 
-  async generateSecret() {
-    let characters =
-      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    let randomID = "";
-    for (let i = 0; i < 7; i++) {
-      randomID += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    return randomID;
-  }
+  // async generateSecret() {
+  //   let characters =
+  //     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  //   let randomID = "";
+  //   for (let i = 0; i < 7; i++) {
+  //     randomID += characters.charAt(
+  //       Math.floor(Math.random() * characters.length)
+  //     );
+  //   }
+  //   return randomID;
+  // }
 
   async generateReferralLink(userId: string) {
     // Create a hash from the userId
@@ -93,8 +93,8 @@ class Auth {
       const incoming: string = password.toString();
       const salt = await bcrypt.genSalt();
       const hash = await bcrypt.hash(incoming, salt);
-      const secret = await this.generateSecret();
-      const newUser = new User({ name, email, phone, password: hash, secret });
+      // const secret = await this.generateSecret();
+      const newUser = new User({ name, email, phone, password: hash });
       const referral = await this.generateUniqueReferralLink(
         newUser._id.toString()
       );
@@ -130,7 +130,7 @@ class Auth {
       const payload = {
         id: user._id,
       };
-      const secret = user.secret;
+      const secret = process.env.JWT_SEC || " ";
       const token = jwt.sign(payload, secret);
       return { user, token };
     } catch (err) {
